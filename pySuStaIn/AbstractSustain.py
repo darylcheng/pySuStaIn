@@ -570,7 +570,7 @@ class AbstractSustain(ABC):
 
         for i in range(nSamples):
             this_prob_subtype               = np.squeeze(prob_subtype[i, :])
-            # if not np.isnan(this_prob_subtype).any()
+            # if not np.isnan(this_prob_subtype).any():
             if (np.sum(np.isnan(this_prob_subtype)) == 0):
                 # this_subtype = this_prob_subtype.argmax(
                 this_subtype                = np.where(this_prob_subtype == np.max(this_prob_subtype))
@@ -587,8 +587,19 @@ class AbstractSustain(ABC):
                     except:
                         prob_ml_subtype[i]  = this_prob_subtype[this_subtype[0][0]]
 
-            this_prob_stage                 = np.squeeze(prob_subtype_stage[i, :, int(ml_subtype[i])])
+            # this_prob_stage                 = np.squeeze(prob_subtype_stage[i, :, int(ml_subtype[i])])
             
+            if not np.isnan(ml_subtype[i]):
+                this_prob_stage = np.squeeze(prob_subtype_stage[i, :, int(ml_subtype[i])])
+                if not np.isnan(this_prob_stage).any():
+                    this_stage = np.where(this_prob_stage == np.max(this_prob_stage))
+                    ml_stage[i] = this_stage[0][0]
+                    prob_ml_stage[i] = this_prob_stage[this_stage[0][0]]
+            else:
+                # Handle the case where ml_subtype[i] is NaN, e.g., skip or default assignment
+                continue  # Or any other appropriate action
+
+
             if (np.sum(np.isnan(this_prob_stage)) == 0):
                 # this_stage = 
                 this_stage                  = np.where(this_prob_stage == np.max(this_prob_stage))
